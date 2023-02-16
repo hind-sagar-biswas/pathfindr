@@ -79,8 +79,8 @@ function filterAdjs(routeOfAdjs, adjsToFilter) {
 		}
 	});
 	tempFilteredAdjs.forEach((tempFilteredAdj) => {
-		const adjVal = graph[tempFilteredAdj[0]][tempFilteredAdj[1]];
-		if (!solidRoute.includes(adjVal)) filteredAdjs.push(tempFilteredAdj);
+		const adjVal = graph[tempFilteredAdj[0]][tempFilteredAdj[1]][0];
+		if (!solidRoute.includes(adjVal)) {filteredAdjs.push(tempFilteredAdj);}
 	});
 	return filteredAdjs;
 }
@@ -110,7 +110,7 @@ function filterRoutes(routesToFilter) {
 	routesToFilter.forEach((routeToFilter) => {
 		const routeEndPointArr = routeToFilter.at(-1);
 		const routeEndpointKey = `${routeEndPointArr[0]}-${routeEndPointArr[1]}`;
-		if (!Object.hasOwnProperty.call(sameEndSets, routeEndpointKey) || (sameEndSets[routeEndpointKey].length > routeToFilter.length)) 
+		if ((!Object.hasOwnProperty.call(sameEndSets, routeEndpointKey) || (sameEndSets[routeEndpointKey].length > routeToFilter.length))) 
 			{sameEndSets[routeEndpointKey] = routeToFilter;}
 	});
 	for (const endPointKey in sameEndSets) {
@@ -144,6 +144,7 @@ function main(oldRoutes) {
 		else return true;
 	});
 	newRoutes = filterRoutes(newRoutes);
+	if(newRoutes.length == 1) return [true, newRoutes]
 	return [routeFound, newRoutes];
 }
 
@@ -221,6 +222,8 @@ function runOnce() {
 	if (found) return 0;
 	[found, routes] = main(routes);
 	routeColor(routes);
+	document.getElementById("route").innerHTML = "";
+	routes.forEach(el => document.getElementById("route").innerHTML += JSON.stringify(getSolidRoute(el)));
 }
 function run() {
 	while (!found) {
