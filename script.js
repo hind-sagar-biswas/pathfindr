@@ -196,7 +196,11 @@ function routeColor(routeList, mainRoute = false) {
 			baseTime = time;
 		});
 	});
-	if (found) document.getElementById("route").innerHTML = JSON.stringify(getSolidRoute(routeList[0]));
+	if (found) {
+		let solid = getSolidRoute(routeList[0]);
+		if (solid.at(-1) == targetVal) document.getElementById("route").innerHTML = JSON.stringify(solid);
+		else document.getElementById("route").innerHTML = "no valid routes found!";
+	}
 }
 
 // Executors
