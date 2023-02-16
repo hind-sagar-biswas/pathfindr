@@ -107,7 +107,7 @@ function createNewRoute(currentRoute) {
 function filterRoutes(routesToFilter) {
 	let filteredRoutes = [];
 	let sameEndSets = {};
-	routesToFilter.forEach(routeToFilter => {
+	routesToFilter.forEach((routeToFilter) => {
 		const routeEndPointArr = routeToFilter.at(-1);
 		const routeEndpointKey = `${routeEndPointArr[0]}-${routeEndPointArr[1]}`;
 		if (!Object.hasOwnProperty.call(sameEndSets, routeEndpointKey) || (sameEndSets[routeEndpointKey].length > routeToFilter.length)) 
