@@ -208,6 +208,7 @@ function generate() {
 	startVal = graph[start[0]][start[1]][0];
 	drawGraph();
 	document.getElementById("runner").disabled = false;
+	document.getElementById("genrerate").disabled = true;
 	document.getElementById("runner-once").disabled = false;
 
 	routes.length = 0;
