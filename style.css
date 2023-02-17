@@ -58,6 +58,9 @@ label {
   color: #333333;
 }
 
+input[type='number']{
+  width: 50px !important;
+}
 
 @media only screen and (max-device-width: 480px) {
 

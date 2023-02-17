@@ -64,6 +64,7 @@ function getAdj(adjRoute) {
 		[adjRouteEndPoint[0], adjRouteEndPoint[1] + 1],
 		[adjRouteEndPoint[0] + 1, adjRouteEndPoint[1]],
 	];
+	tempAdjPoints = shuffle(tempAdjPoints);
 	return filterAdjs(adjRoute, tempAdjPoints);
 }
 function filterAdjs(routeOfAdjs, adjsToFilter) {
@@ -155,7 +156,7 @@ function main(oldRoutes) {
 		else return true;
 	});
 	newRoutes = filterRoutes(newRoutes);
-	if (newRoutes.length == 1) return [true, newRoutes];
+	if (newRoutes.length == 1 && getAdj(newRoutes[0]).length == 0) return [true, newRoutes];
 	return [routeFound, newRoutes];
 }
 
@@ -238,24 +239,39 @@ function routeColor(routeList, mainRoute = false) {
 	if (found) {
 		let solid = getSolidRoute(routeList[0]);
 		if (solid.at(-1) == targetVal)
-			document.getElementById("route").innerHTML = JSON.stringify(solid);
-		else document.getElementById("route").innerHTML = "no valid routes found!";
+			document.getElementById("route").textContent = JSON.stringify(solid);
+		else document.getElementById("route").textContent = "no valid routes found!";
 	}
 }
 
 // Executors
 function generate() {
+	graphNode.style.pointerEvents = "all";
+
+	// Reset
+	graph = [];
+	grid = [0, 0];
+	startVal = 0;
+	targetVal = 1;
+	start = [0, 0];
+	found = false;
+
+	// Get values
 	grid[0] = parseInt(document.getElementById("row").value);
 	grid[1] = parseInt(document.getElementById("col").value);
 	start[0] = parseInt(document.getElementById("row").value) - 1;
 	start[1] = parseInt(document.getElementById("col").value) - 1;
 	graph = graphGen();
 	startVal = graph[start[0]][start[1]][0];
+
+	// Draw graph
 	drawGraph();
+
+	// Enable buttons
 	document.getElementById("runner").disabled = false;
-	document.getElementById("genrerate").disabled = true;
 	document.getElementById("runner-once").disabled = false;
 
+	// Set value of routes
 	routes.length = 0;
 	routes.push([]);
 	routes[0].push(start);
@@ -275,16 +291,34 @@ function runOnce() {
 	);
 }
 function run() {
+	graphNode.style.pointerEvents = "none";
+
+	var startTime = performance.now();
 	while (!found) {
 		[found, routes] = main(routes);
 		routeColor(routes);
 	}
+	var endTime = performance.now();
+
 	drawGraph();
 	routeColor(routes, true);
+	document.getElementById("time").textContent = `took ${((endTime - startTime) / 1000).toFixed(3)} seconds to find!`;
+}
+function shuffle(array) {
+  let currentIndex = array.length,  randomIndex;
+
+  while (currentIndex != 0) {
+    randomIndex = Math.floor(Math.random() * currentIndex);
+    currentIndex--;
+    [array[currentIndex], array[randomIndex]] = [array[randomIndex], array[currentIndex]];
+  }
+
+  return array;
 }
 
 // Executions
 window.addEventListener("load", () => {
+	// For mobile screens
 	if (screen.width <= 500) {
 		const mainCont = document.getElementById("container");
 		const routeCont = document.getElementById("route-cont");

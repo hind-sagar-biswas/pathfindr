@@ -23,14 +23,14 @@
             <div id="header">
                 <center>
                     <h1>
-                        PATHFINDR 1.0
+                        PATHFINDR v1.3
                     </h1>
-                    <h5>Still under dev. SO there might be BUGS!</h5>
+                    <h5>There might be BUGS!</h5>
+                    <h6>If bugs found, please inform at -> <a href="mailto:ryoutaroshinigami@gmail.com">ryoutaroshinigami@gmail.com</a></h6>
                 </center>
                 <hr>
                 <b>IMPORTANT NOTES:</b>
                 <ul>
-                    <li>To regenerate graph/plot, reload the page!</li>
                     <li>Make sure to keep at least one path open [else RIP your RAM!]</li>
                     <li>The bigger the grid you make, the more time it will take [Highest recommendation: 30x30]</li>
                 </ul>
@@ -53,7 +53,7 @@
                             placeholder="col" min="4" max="45" value="7" required>
                     </div>
                     <div class="col-12">
-                        <button class="btn btn-sm btn-primary" id="genrerate">GENERATE</button>
+                        <button class="btn btn-sm btn-primary" id="genrerate">GENERATE GRID</button>
                     </div>
                 </form>
                 <hr>
@@ -61,25 +61,26 @@
                     <b>SELECT: </b> &nbsp;
                     <div class="form-check form-check-inline">
                         <input class="form-check-input" type="radio" name="toggler" id="start" value="start">
-                        <label class="form-check-label" for="start">
-                            START POINT <i class="fas fa-street-view"></i>
+                        <label class="form-check-label" for="start" style="color:green;">
+                            START <i class="fas fa-street-view"></i>
                         </label>
                     </div>
                     <div class="form-check form-check-inline">
                         <input class="form-check-input" type="radio" name="toggler" id="end" value="end">
-                        <label class="form-check-label" for="end">
-                            END POINT <i class="fas fa-flag"></i>
+                        <label class="form-check-label" for="end" style="color:red;">
+                            END <i class="fas fa-flag"></i>
                         </label>
                     </div>
                     <div class="form-check form-check-inline">
                         <input class="form-check-input" type="radio" name="toggler" id="blocks" value="blocks" checked>
-                        <label class="form-check-label" for="blocks">BLOCKS</label>
+                        <label class="form-check-label" for="blocks" style="color:#333333;">BLOCKS <i class="fas fa-square"></i></label>
                     </div>
                 </form>
                 <hr>
             </div>
             <button class="btn btn-sm btn-primary" id="runner" onclick="run()" disabled>FIND ROUTE</button>
             <button class="btn btn-sm btn-primary" id="runner-once" onclick="runOnce()" disabled>FIND ONCE</button>
+            <button class="btn" id="time"></button>
             <hr>
             <div id="graph"></div>
             <hr>
