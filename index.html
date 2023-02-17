@@ -18,68 +18,72 @@
 </head>
 
 <body>
-    <main class="p-3">
+    <main class="p-3" id="container">
         <div id="main">
-            <center>
-                <h1>
-                    PATHFINDR 1.0
-                </h1>
-                <h5>Still under dev. SO there might be BUGS!</h5>
-            </center>
-            <hr>
-            <b>IMPORTANT NOTES:</b>
-            <ul>
-                <li>To regenerate graph/plot, reload the page!</li>
-                <li>Make sure to keep at least one path open [else RIP your RAM!]</li>
-                <li>The bigger the grid you make, the more time it will take [Highest recommendation: 30x30]</li>
-            </ul>
-            <hr>
-            <form class="row row-cols-lg-auto g-1 align-items-center" onsubmit="event.preventDefault(); generate();">
-                <div class="col-12">
-                    <b>[ROW X COL] :</b>
-                </div>
-                <div class="col-12">
-                    <input class="form-control form-control-sm" style="width:100px" type="number" name="row" id="row"
-                        placeholder="row" min="4" max="45" value="7" required>
-                </div>
-                <div class="col-12">
-                    X
-                </div>
-                <div class="col-12">
-                    <input class="form-control form-control-sm" style="width:100px" type="number" name="col" id="col"
-                        placeholder="col" min="4" max="45" value="7" required>
-                </div>
-                <div class="col-12">
-                    <button class="btn btn-sm btn-primary" id="genrerate">GENERATE</button>
-                </div>
-            </form>
-            <hr>
-            <form name="selector" onchange="switchSelector()">
-                <b>SELECT: </b> &nbsp;
-                <div class="form-check form-check-inline">
-                    <input class="form-check-input" type="radio" name="toggler" id="start" value="start">
-                    <label class="form-check-label" for="start">
-                        START POINT <i class="fas fa-street-view"></i>
-                    </label>
-                </div>
-                <div class="form-check form-check-inline">
-                    <input class="form-check-input" type="radio" name="toggler" id="end" value="end">
-                    <label class="form-check-label" for="end">
-                        END POINT <i class="fas fa-flag"></i>
-                    </label>
-                </div>
-                <div class="form-check form-check-inline">
-                    <input class="form-check-input" type="radio" name="toggler" id="blocks" value="blocks" checked>
-                    <label class="form-check-label" for="blocks">BLOCKS</label>
-                </div>
-            </form>
-            <hr>
+            <div id="header">
+                <center>
+                    <h1>
+                        PATHFINDR 1.0
+                    </h1>
+                    <h5>Still under dev. SO there might be BUGS!</h5>
+                </center>
+                <hr>
+                <b>IMPORTANT NOTES:</b>
+                <ul>
+                    <li>To regenerate graph/plot, reload the page!</li>
+                    <li>Make sure to keep at least one path open [else RIP your RAM!]</li>
+                    <li>The bigger the grid you make, the more time it will take [Highest recommendation: 30x30]</li>
+                </ul>
+                <hr>
+            </div>
+            <div id="forms">
+                <form class="row row-cols-lg-auto g-1 align-items-center" onsubmit="event.preventDefault(); generate();">
+                    <div class="col-12">
+                        <b>[ROW X COL] :</b>
+                    </div>
+                    <div class="col-12">
+                        <input class="form-control form-control-sm" style="width:100px" type="number" name="row" id="row"
+                            placeholder="row" min="4" max="45" value="7" required>
+                    </div>
+                    <div class="col-12" id="x">
+                        X
+                    </div>
+                    <div class="col-12">
+                        <input class="form-control form-control-sm" style="width:100px" type="number" name="col" id="col"
+                            placeholder="col" min="4" max="45" value="7" required>
+                    </div>
+                    <div class="col-12">
+                        <button class="btn btn-sm btn-primary" id="genrerate">GENERATE</button>
+                    </div>
+                </form>
+                <hr>
+                <form name="selector" onchange="switchSelector()">
+                    <b>SELECT: </b> &nbsp;
+                    <div class="form-check form-check-inline">
+                        <input class="form-check-input" type="radio" name="toggler" id="start" value="start">
+                        <label class="form-check-label" for="start">
+                            START POINT <i class="fas fa-street-view"></i>
+                        </label>
+                    </div>
+                    <div class="form-check form-check-inline">
+                        <input class="form-check-input" type="radio" name="toggler" id="end" value="end">
+                        <label class="form-check-label" for="end">
+                            END POINT <i class="fas fa-flag"></i>
+                        </label>
+                    </div>
+                    <div class="form-check form-check-inline">
+                        <input class="form-check-input" type="radio" name="toggler" id="blocks" value="blocks" checked>
+                        <label class="form-check-label" for="blocks">BLOCKS</label>
+                    </div>
+                </form>
+                <hr>
+            </div>
             <button class="btn btn-sm btn-primary" id="runner" onclick="run()" disabled>FIND ROUTE</button>
             <button class="btn btn-sm btn-primary" id="runner-once" onclick="runOnce()" disabled>FIND ONCE</button>
             <hr>
             <div id="graph"></div>
             <hr>
-            <div class="route"><b>ROUTE:</b> <span id="route"></span></div>
+            <div class="route" id="route-cont"><b>ROUTE:</b> <span id="route"></span></div>
         </div>
     </main>
 

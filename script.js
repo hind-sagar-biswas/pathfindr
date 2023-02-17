@@ -1,3 +1,6 @@
+const graphNode = document.getElementById("graph");
+const screenWidth = screen.width;
+
 let graph = [];
 let grid = [0, 0];
 let startVal = 0;
@@ -41,7 +44,7 @@ function toggleBlockage(rowIndex, colIndex, id) {
 			targetVal = id;
 			graph[rowIndex][colIndex][1] = false;
 			break;
-	
+
 		default:
 			graph[rowIndex][colIndex][1] = !graph[rowIndex][colIndex][1];
 			break;
@@ -80,7 +83,9 @@ function filterAdjs(routeOfAdjs, adjsToFilter) {
 	});
 	tempFilteredAdjs.forEach((tempFilteredAdj) => {
 		const adjVal = graph[tempFilteredAdj[0]][tempFilteredAdj[1]][0];
-		if (!solidRoute.includes(adjVal)) {filteredAdjs.push(tempFilteredAdj);}
+		if (!solidRoute.includes(adjVal)) {
+			filteredAdjs.push(tempFilteredAdj);
+		}
 	});
 	return filteredAdjs;
 }
@@ -98,7 +103,9 @@ function createNewRoute(currentRoute) {
 	const currentRouteAdjs = getAdj(currentRoute);
 	currentRouteAdjs.forEach((currentRouteAdj) => {
 		const newFormedRoute = new Array();
-		currentRoute.forEach((elem) => { newFormedRoute.push(elem); });
+		currentRoute.forEach((elem) => {
+			newFormedRoute.push(elem);
+		});
 		newFormedRoute.push(currentRouteAdj);
 		formedRoutes.push(newFormedRoute);
 	});
@@ -110,8 +117,12 @@ function filterRoutes(routesToFilter) {
 	routesToFilter.forEach((routeToFilter) => {
 		const routeEndPointArr = routeToFilter.at(-1);
 		const routeEndpointKey = `${routeEndPointArr[0]}-${routeEndPointArr[1]}`;
-		if ((!Object.hasOwnProperty.call(sameEndSets, routeEndpointKey) || (sameEndSets[routeEndpointKey].length > routeToFilter.length))) 
-			{sameEndSets[routeEndpointKey] = routeToFilter;}
+		if (
+			!Object.hasOwnProperty.call(sameEndSets, routeEndpointKey) ||
+			sameEndSets[routeEndpointKey].length > routeToFilter.length
+		) {
+			sameEndSets[routeEndpointKey] = routeToFilter;
+		}
 	});
 	for (const endPointKey in sameEndSets) {
 		if (Object.hasOwnProperty.call(sameEndSets, endPointKey)) {
@@ -144,15 +155,22 @@ function main(oldRoutes) {
 		else return true;
 	});
 	newRoutes = filterRoutes(newRoutes);
-	if(newRoutes.length == 1) return [true, newRoutes]
+	if (newRoutes.length == 1) return [true, newRoutes];
 	return [routeFound, newRoutes];
 }
 
 // Visualizers
 function drawGraph() {
-	let html = "";
+	while (graphNode.firstChild) {
+		graphNode.removeChild(graphNode.lastChild);
+	}
+
 	graph.forEach((row, rowIndex) => {
-		html += "<div class='row'>";
+		const rowElement = document.createElement("div");
+		rowElement.className = "row";
+		rowElement.id = `row-${rowIndex}`;
+		graphNode.appendChild(rowElement);
+
 		row.forEach((cell, cellIndex) => {
 			let color = "#567d46";
 			let value = "";
@@ -161,19 +179,40 @@ function drawGraph() {
 			if (startVal == cell[0]) {
 				color = "green";
 				value = `<i class="fas fa-street-view" style="color: white"></i>`;
-			}
-			else if (targetVal == cell[0]) {
+			} else if (targetVal == cell[0]) {
 				color = "red";
 				value = `<i class="fas fa-flag" style="color: white"></i>`;
 			}
 
-			html += `<div class='cell' id="cell-${cell[0]}" style="background: ${color}" onmousedown="toggleBlockage(${rowIndex}, ${cellIndex}, ${cell[0]});">
-						${value}
-					</div>`;
+			const cellElement = document.createElement("div");
+			cellElement.className = "cell";
+			cellElement.id = `cell-${cell[0]}`;
+			cellElement.style.backgroundColor = color;
+			cellElement.innerHTML = value;
+			document.getElementById(`row-${rowIndex}`).appendChild(cellElement);
+			document
+				.getElementById(`cell-${cell[0]}`)
+				.addEventListener("click", () => {
+					toggleBlockage(rowIndex, cellIndex, cell[0]);
+				});
 		});
-		html += "</div>";
 	});
-	document.getElementById("graph").innerHTML = html;
+
+	if (screenWidth <= 500) {
+		graphNode.style.width = `${screenWidth - 40}px`;
+		graphNode.style.height = `${screenWidth - 40}px`;
+
+		const cellSide = (screenWidth - 40) / grid[0];
+		const cellWidth = (screenWidth - 40) / grid[1];
+		console.log(cellSide);
+		const cellList = document.getElementsByClassName('cell')
+
+		for (let cellCount = 0; cellCount < cellList.length; cellCount++) {
+			const cellElement = cellList[cellCount];
+			cellElement.style.height = `${cellSide}px`;
+			cellElement.style.width = `${cellWidth}px`;
+		}
+	}
 }
 function routeColor(routeList, mainRoute = false) {
 	routeList.forEach((rt) => {
@@ -198,7 +237,8 @@ function routeColor(routeList, mainRoute = false) {
 	});
 	if (found) {
 		let solid = getSolidRoute(routeList[0]);
-		if (solid.at(-1) == targetVal) document.getElementById("route").innerHTML = JSON.stringify(solid);
+		if (solid.at(-1) == targetVal)
+			document.getElementById("route").innerHTML = JSON.stringify(solid);
 		else document.getElementById("route").innerHTML = "no valid routes found!";
 	}
 }
@@ -227,7 +267,12 @@ function runOnce() {
 	[found, routes] = main(routes);
 	routeColor(routes);
 	document.getElementById("route").innerHTML = "";
-	routes.forEach(el => document.getElementById("route").innerHTML += JSON.stringify(getSolidRoute(el)));
+	routes.forEach(
+		(el) =>
+			(document.getElementById("route").innerHTML += JSON.stringify(
+				getSolidRoute(el)
+			))
+	);
 }
 function run() {
 	while (!found) {
@@ -239,3 +284,12 @@ function run() {
 }
 
 // Executions
+window.addEventListener("load", () => {
+	if (screen.width <= 500) {
+		const mainCont = document.getElementById("container");
+		const routeCont = document.getElementById("route-cont");
+		mainCont.style.height = `${mainCont.offsetHeight + (routeCont.offsetHeight * 3) + screenWidth + 100}px`;
+		mainCont.style.padding = "5px";
+		console.log(mainCont.offsetHeight);
+	}
+});
