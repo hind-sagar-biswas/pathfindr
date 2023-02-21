@@ -36,6 +36,7 @@ h5 {
 }
 
 .cell {
+  background-color: #567d46;
   border-left: 1px solid rgb(7, 47, 13);
   border-bottom: 1px solid rgb(7, 47, 13);
   width: 30px;
@@ -44,6 +45,16 @@ h5 {
   justify-content: center;
   align-items: center;
   padding: 0;
+}
+
+.start {
+  background-color: green;
+  color: white;
+}
+
+.destination {
+  background-color: red;
+  color: white;
 }
 
 .route {
@@ -58,7 +69,7 @@ label {
   color: #333333;
 }
 
-input[type='number']{
+input[type='number'] {
   width: 50px !important;
 }
 
@@ -78,7 +89,7 @@ input[type='number']{
     overflow: auto;
   }
 
-  #x{
+  #x {
     display: none;
   }
 
