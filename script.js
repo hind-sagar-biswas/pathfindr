@@ -20,12 +20,11 @@ const grid = [0, 0];
 
 // VARIABLES
 let start = 0; // Initial position
+let target = 0; // Target position
 let found = false; // whether the destination is found or not
 let selector = "blocks";
 
-let routes = new Array();
-routes.push([]);
-routes[0].push(toString(start));
+let routes = [['0']];
 
 
 
@@ -44,6 +43,37 @@ function graphGen() {
 }
 
 
+// TOGGLES
+function toggleBlockage(node) {
+	if (node == start || node == target) return;
+	switch (selector) {
+		case "start":
+			document.getElementById(`cell-${start}`).className = "cell ";
+			document.getElementById(`cell-${node}`).className = "cell start ";
+			start = node;
+			graph[node].blocked = false;
+			break;
+			
+		case "end":
+			document.getElementById(`cell-${target}`).className = "cell ";
+			document.getElementById(`cell-${node}`).className = "cell destination ";
+			graph[target].destination = false;
+			graph[target].blocked = false;
+			target = node;
+			graph[target].destination = true;
+			graph[target].blocked = false;
+			break;
+
+		default:
+			graph[node].blocked = !graph[node].blocked;
+			document.getElementById(`cell-${node}`).classList.toggle("blocked");
+			break;
+	}
+}
+function switchSelector() {
+	selector = document.forms["selector"]["toggler"].value;
+}
+
 
 // get possible adjacent nodeID(s)
 function getAdj(node) {
@@ -55,7 +85,6 @@ function getAdj(node) {
 		[row, col + 1],
 		[row + 1, col],
 	];
-	tempAdjPoints = shuffle(tempAdjPoints);
 	return filterAdjs(tempAdjPoints);
 }
 function filterAdjs(adjsToFilter) {
@@ -73,12 +102,16 @@ function filterAdjs(adjsToFilter) {
 	});
 	tempFilteredAdjs.forEach((tempFilteredAdj) => {
 		const adjVal = (tempFilteredAdj[0] * grid[1]) + tempFilteredAdj[1];
-		filteredAdjs.push(toString(adjVal));
+		filteredAdjs.push(`${adjVal}`);
 	});
 	return filteredAdjs;
 }
 function checkAdjAvailable(node) {
-	graph[node].adjacents.forEach(adj => { if (!graph[adj].blocked) return true; });
+	const adjacents = graph[node].adjacents;
+	for (let adj = 0; adj < adjacents.length; adj++) {
+		const adjId = adjacents[adj];
+		if (!graph[adjId].blocked) return true;
+	}
 	return false;
 }
 
@@ -88,10 +121,10 @@ function checkAdjAvailable(node) {
 function createNewRoute(currentRoute) {
 	const formedRoutes = [];
 	const currentRouteId = parseInt(currentRoute.at(-1));
-	const currentRouteAdjs = graph[currentRouteId].adjacents;
+	let currentRouteAdjs = graph[currentRouteId].adjacents;
 	currentRouteAdjs.forEach((currentRouteAdj) => {
 		if (!graph[currentRouteAdj].blocked) {
-			const newFormedRoute = new Array();eEndPoint
+			const newFormedRoute = new Array();
 			currentRoute.forEach((node) => {
 				newFormedRoute.push(node);
 			});
@@ -102,8 +135,9 @@ function createNewRoute(currentRoute) {
 	return formedRoutes;
 }
 function filterRoutes(routesToFilter) {
-	let filteredRoutes = [];
-	let sameEndSets = {};
+	let filteredRoutes = new Array;
+	let sameEndSets = new Object;
+	routesToFilter = shuffle(routesToFilter);
 	routesToFilter.forEach((routeToFilter) => {
 		const routeEndPoint = routeToFilter.at(-1);
 		if (!Object.hasOwnProperty.call(sameEndSets, routeEndPoint) || sameEndSets[routeEndPoint].length > routeToFilter.length ) {
@@ -122,10 +156,10 @@ function filterRoutes(routesToFilter) {
 
 
 // MAIN FUNCTIONS
-function findr(routes) {
+function findr(oldRoutes) {
 	let routeFound = false;
 	let newRoutes = [];
-	routes.every((route) => {
+	oldRoutes.every((route) => {
 		const newRoute = createNewRoute(route);
 		newRoute.every((nRoute) => {
 			const routeEndpoint = nRoute.at(-1);
@@ -151,6 +185,9 @@ function findr(routes) {
 
 // VISUALIZERS
 function drawGraph() {
+	while (graphNode.firstChild) {
+		graphNode.removeChild(graphNode.lastChild);
+	}
 	for (let rowCount = 0; rowCount < grid[0]; rowCount++) {
 		const rowElement = document.createElement("div");
 		rowElement.className = "row";
@@ -169,6 +206,9 @@ function drawGraph() {
 				else if (nodeObj.blocked) nodeElement.className += "blocked ";
 				nodeElement.id = `cell-${node}`;
 				document.getElementById(rowId).appendChild(nodeElement);
+				document.getElementById(`cell-${node}`).addEventListener("click", () => {
+					toggleBlockage(node);
+				});
 			}
 		}
 	}
@@ -209,7 +249,7 @@ function routeColor(routeList, mainRoute = false) {
 		});
 	});
 	if (found) {
-		if (routeList[0].at(-1) == targetVal) document.getElementById("route").textContent = JSON.stringify(solid);
+		if (graph[routeList[0].at(-1)].destination) document.getElementById("route").textContent = JSON.stringify(routeList[0]);
 		else document.getElementById("route").textContent = "no valid routes found!";
 	}
 }
@@ -223,11 +263,14 @@ function generate() {
 	grid[0] = 0;
 	grid[1] = 0;
 	start = 0;
+	target = 0;
 	found = false;
 
 	// Get values
 	grid[0] = parseInt(document.getElementById("row").value);
 	grid[1] = parseInt(document.getElementById("col").value);
+
+	target = (grid[0] * grid[1]) - 1;
 
 	// Generate graph
 	graphGen();
@@ -238,10 +281,7 @@ function generate() {
 	document.getElementById("runner-once").disabled = false;
 
 	// Set value of routes
-	routes.length = 0;
-	routes.push([]);
-	routes[0].push(toString(start));
-
+	routes = [['0']];
 	return false;
 }
 function runOnce() {
@@ -250,7 +290,7 @@ function runOnce() {
 	graphGen();
 	drawGraph();
 }
-function run() {
+function run() { 
 	graphNode.style.pointerEvents = "none";
 
 	var startTime = performance.now();
@@ -278,3 +318,18 @@ function shuffle(array) {
 
 	return array;
 }
+
+
+// Executions
+window.addEventListener("load", () => {
+	// For mobile screens
+	if (screen.width <= 500) {
+		const mainCont = document.getElementById("container");
+		const routeCont = document.getElementById("route-cont");
+		mainCont.style.height = `${
+			mainCont.offsetHeight + routeCont.offsetHeight * 3 + screenWidth + 100
+		}px`;
+		mainCont.style.padding = "5px";
+		console.log(mainCont.offsetHeight);
+	}
+});

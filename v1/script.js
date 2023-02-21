@@ -2,9 +2,7 @@ const graphNode = document.getElementById("graph");
 const screenWidth = screen.width;
 
 let graph = new Array();
-let dfsGraph = new Array();
 let grid = [0, 0];
-let dfsGrid = [0, 0];
 let startVal = 0;
 let targetVal = 1;
 let start = [0, 0];
@@ -27,24 +25,6 @@ function graphGen() {
 		for (let col_i = 0; col_i < colCount; col_i++) {
 			cellCount++;
 			generatedRow.push([cellCount, false]);
-		}
-		generatedGraph.push(generatedRow);
-	}
-	return generatedGraph;
-}
-function dfsGraphGen() {
-	dfsGrid = [Math.ceil(grid[0] / 2), Math.ceil(grid[1] / 2)];
-
-	let rowCount = dfsGrid[0];
-	let colCount = dfsGrid[1];
-	let nodeID = 0;
-	const prevNode = 0;
-	let generatedGraph = [];
-	for (let row_i = 0; row_i < rowCount; row_i++) {
-		let generatedRow = [];
-		for (let col_i = 0; col_i < colCount; col_i++) {
-			nodeID++;
-			generatedRow.push([nodeID, false, prevNode, [row_i * 2, col_i * 2]]); // nodeID (arr), marked (bool), prevNode (arr), correspondingNode (arr)
 		}
 		generatedGraph.push(generatedRow);
 	}
@@ -118,30 +98,6 @@ const getSolidRoute = (liquidRoute) => {
 	return solidRouteResult;
 };
 
-function getDfsAdj(currentNode) {
-	let tempAdjPoints = [
-		[currentNode[0] - 1, currentNode[1]],
-		[currentNode[0], currentNode[1] - 1],
-		[currentNode[0], currentNode[1] + 1],
-		[currentNode[0] + 1, currentNode[1]],
-	];
-	tempAdjPoints = shuffle(tempAdjPoints);
-	return filterDfsAdjs(tempAdjPoints);
-}
-function filterDfsAdjs(adjsToFilter) {
-	let filteredAdjs = [];
-	adjsToFilter.forEach((adj) => {
-		if (
-			adj[0] >= 0 &&
-			adj[0] <= dfsGrid[0] - 1 &&
-			adj[1] >= 0 &&
-			adj[1] <= dfsGrid[1] - 1
-		) {
-			if (!dfsGraph[adj[0]][adj[1]][1]) filteredAdjs.push(adj);
-		}
-	});
-	return filteredAdjs;
-}
 
 // Route creation
 function createNewRoute(currentRoute) {
@@ -179,37 +135,6 @@ function filterRoutes(routesToFilter) {
 	return filteredRoutes;
 }
 
-// DFS
-function DFS(node = [0, 0], prevNode = [0, 0]) {
-	dfsGraph[node[0]][node[1]][1] = true;
-	if (!dfsGraph[node[0]][node[1]][2]) dfsGraph[node[0]][node[1]][2] = prevNode;
-	const nextNodes = getDfsAdj(node);
-	nextNodes.forEach((nextNode) => {
-		return DFS(nextNode, node);
-	});
-}
-function implementDFS() {
-	dfsGraph.forEach((row, rowIndex) => {
-		row.forEach((col, colIndex) => {
-			const graphCell = col[3];
-			const prevCell = dfsGraph[col[2][0]][col[2][1]][2];
-			const edgeCell = getEdge(graphCell, prevCell);
-
-			graph[graphCell[0]][graphCell[1]][1] = true;
-			graph[edgeCell[0]][edgeCell[1]][1] = true;
-
-			drawGraph();
-		});
-	});
-}
-function getEdge(currentNode, prevNode) {
-	const edgeRow = Math.ceil((currentNode[0] + prevNode[0]) / 2);
-	const edgeCol = Math.ceil((currentNode[1] + prevNode[1]) / 2);
-	// console.log("current node", currentNode);
-	// console.log("previous node", prevNode);
-	// console.log(edgeRow, edgeCol);
-	return [edgeRow, edgeCol];
-}
 
 // Main function
 function main(oldRoutes) {
@@ -402,11 +327,6 @@ function shuffle(array) {
 	return array;
 }
 
-function runDFS() {
-	dfsGraph = dfsGraphGen();
-	DFS();
-	implementDFS();
-}
 
 // Executions
 window.addEventListener("load", () => {

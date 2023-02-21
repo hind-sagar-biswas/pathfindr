@@ -47,10 +47,6 @@ h5 {
   padding: 0;
 }
 
-.blocked {
-  background-color: #333333;
-}
-
 .start {
   background-color: green;
   color: white;
