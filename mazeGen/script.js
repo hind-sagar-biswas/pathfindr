@@ -1,32 +1,23 @@
-/* GRAPH structure ****************************************************
-graph => Object(
-	key => int cellId
-	value => Object(
-		"blocked": bool false
-		"destination": bool false [if true -> 'blocked' can't be true]
-		"adjacents": Array(
-			int cellId(s)
-		)
-	)
-)
-***********************************************************************/
 // CONSTANTS
 const graphNode = document.getElementById("graph");
+const dfsGraphNode = document.getElementById("dfs-graph");
 const screenWidth = screen.width;
 
 const graph = new Object();
 const grid = [0, 0];
+const dfsGraph = new Object();
+const dfsGrid = [0, 0];
 
 
 // VARIABLES
+let time = -100;
+let timeDFS = -100;
 let start = 0; // Initial position
 let target = 0; // Target position
 let found = false; // whether the destination is found or not
 let selector = "blocks";
 
-let routes = [['0']];
-
-
+let routes = [["0"]];
 
 // GENERATORS
 function graphGen() {
@@ -36,21 +27,37 @@ function graphGen() {
 	for (let nodeID = 0; nodeID < nodeCount; nodeID++) {
 		const nodeObj = new Object();
 		nodeObj.blocked = false;
-		nodeObj.destination = (nodeID == target) ? true : false;
+		nodeObj.destination = nodeID == target ? true : false;
 		nodeObj.adjacents = getAdj(nodeID);
 		graph[`${nodeID}`] = nodeObj;
 	}
+    graphGenDFS();
 }
-function nodeToRow(node) {
+function graphGenDFS() {
+	const nodeCount = dfsGrid[0] * dfsGrid[1];
+
+	dfsGraph.length = 0;
+	for (let nodeID = 0; nodeID < nodeCount; nodeID++) {
+		const nodeObj = new Object();
+		nodeObj.visited = false;
+		nodeObj.previous = nodeID == 0 ? "-1" : null;
+		nodeObj.complementary = getComplementary(nodeID);
+		nodeObj.adjacents = getAdjDFS(nodeID);
+		dfsGraph[`${nodeID}`] = nodeObj;
+	}
+}
+function nodeToRow(node, dfs = false) {
+	if(dfs) return Math.floor(parseInt(node) / dfsGrid[1]);
 	return Math.floor(parseInt(node) / grid[1]);
 }
-function nodeToCol(node) {
-	return node - (nodeToRow(node) * grid[1]);
+function nodeToCol(node, dfs = false) {
+	if(dfs) return node - nodeToRow(node, true) * dfsGrid[1];
+	return node - nodeToRow(node) * grid[1];
 }
-function row_colToNode(row, col) {
+function row_colToNode(row, col, dfs = false) {
+	if(dfs) return row * dfsGrid[1] + col;
 	return row * grid[1] + col;
 }
-
 
 // TOGGLES
 function toggleBlockage(node) {
@@ -63,7 +70,7 @@ function toggleBlockage(node) {
 			routes = [[start]];
 			graph[node].blocked = false;
 			break;
-			
+
 		case "end":
 			document.getElementById(`cell-${target}`).className = "cell ";
 			document.getElementById(`cell-${node}`).className = "cell destination ";
@@ -83,7 +90,6 @@ function toggleBlockage(node) {
 function switchSelector() {
 	selector = document.forms["selector"]["toggler"].value;
 }
-
 
 // get possible adjacent nodeID(s)
 function getAdj(node) {
@@ -125,6 +131,59 @@ function checkAdjAvailable(node) {
 	return false;
 }
 
+function getAdjDFS(node) {
+	const row = nodeToRow(node, true);
+	const col = nodeToCol(node, true);
+	let tempAdjPoints = [
+		[row - 1, col],
+		[row, col - 1],
+		[row, col + 1],
+		[row + 1, col],
+	];
+	return filterAdjsDFS(tempAdjPoints);
+}
+function filterAdjsDFS(adjsToFilter) {
+	let tempFilteredAdjs = [];
+	let filteredAdjs = [];
+	adjsToFilter.forEach((adj) => {
+		if (
+			adj[0] >= 0 &&
+			adj[0] <= dfsGrid[0] - 1 &&
+			adj[1] >= 0 &&
+			adj[1] <= dfsGrid[1] - 1
+		) {
+			tempFilteredAdjs.push(adj);
+		}
+	});
+	tempFilteredAdjs.forEach((tempFilteredAdj) => {
+		const adjVal = row_colToNode(tempFilteredAdj[0], tempFilteredAdj[1], true);
+		filteredAdjs.push(`${adjVal}`);
+	});
+	return shuffle(filteredAdjs);
+}
+function checkAdjAvailableDFS(node) {
+	const adjacents = dfsGraph[node].adjacents;
+	for (let adj = 0; adj < adjacents.length; adj++) {
+		if (!dfsGraph[adj].visited) return true;
+	}
+	return false;
+}
+function getComplementary(node) {
+	node = parseInt(node);
+	const row = nodeToRow(node, true) * 2;
+	const col = nodeToCol(node, true) * 2;
+	return `${row_colToNode(row, col)}`;
+}
+function getEdgeNode(nodeDFS, prevNodeDFS) {
+	const node = dfsGraph[parseInt(nodeDFS)].complementary;
+	const prevNode = dfsGraph[parseInt(prevNodeDFS)].complementary;
+	const nodeArr = [nodeToRow(node), nodeToCol(node)];
+	const prevNodeArr = [nodeToRow(prevNode), nodeToCol(prevNode)];
+	const edgeRow = (nodeArr[0] + prevNodeArr[0]) / 2;
+	const edgeCol = (nodeArr[1] + prevNodeArr[1]) / 2;
+	return `${row_colToNode(edgeRow, edgeCol)}`;
+}
+
 
 
 // Route creation
@@ -145,12 +204,15 @@ function createNewRoute(currentRoute) {
 	return formedRoutes;
 }
 function filterRoutes(routesToFilter) {
-	let filteredRoutes = new Array;
-	let sameEndSets = new Object;
+	let filteredRoutes = new Array();
+	let sameEndSets = new Object();
 	routesToFilter = shuffle(routesToFilter);
 	routesToFilter.forEach((routeToFilter) => {
 		const routeEndPoint = routeToFilter.at(-1);
-		if (!Object.hasOwnProperty.call(sameEndSets, routeEndPoint) || sameEndSets[routeEndPoint].length > routeToFilter.length ) {
+		if (
+			!Object.hasOwnProperty.call(sameEndSets, routeEndPoint) ||
+			sameEndSets[routeEndPoint].length > routeToFilter.length
+		) {
 			sameEndSets[routeEndPoint] = routeToFilter;
 		}
 	});
@@ -162,8 +224,6 @@ function filterRoutes(routesToFilter) {
 	}
 	return filteredRoutes;
 }
-
-
 
 // MAIN FUNCTIONS
 function findr(oldRoutes) {
@@ -187,11 +247,30 @@ function findr(oldRoutes) {
 		else return true;
 	});
 	newRoutes = filterRoutes(newRoutes);
-	if (newRoutes.length == 1 && !checkAdjAvailable(newRoutes[0].at(-1))) return [true, newRoutes];
+	if (newRoutes.length == 1 && !checkAdjAvailable(newRoutes[0].at(-1)))
+		return [true, newRoutes];
 	return [routeFound, newRoutes];
 }
+function DFS(node = "0", prevNode = "-1") {
+	if (!dfsGraph[node].visited) {
+		dfsGraph[node].previous = prevNode;
+		dfsGraph[node].visited = true;
+	}
 
+	drawDFS(node, prevNode);
+	timeDFS += 100;
+	setTimeout(() => {
+		document.getElementById(`dfs-cell-${node}`).style.color = "white";
+	}, timeDFS);
 
+	// if (!checkAdjAvailableDFS(node)) return true;
+	const adjNodes = shuffle(dfsGraph[node].adjacents);
+	adjNodes.forEach((adjNode) => {
+		if (adjNode != prevNode && !dfsGraph[adjNode].visited)
+			return DFS(adjNode, node);
+	});
+	return;
+}
 
 // VISUALIZERS
 function drawGraph() {
@@ -216,9 +295,11 @@ function drawGraph() {
 				else if (nodeObj.blocked) nodeElement.className += "blocked ";
 				nodeElement.id = `cell-${node}`;
 				document.getElementById(rowId).appendChild(nodeElement);
-				document.getElementById(`cell-${node}`).addEventListener("click", () => {
-					toggleBlockage(node);
-				});
+				document
+					.getElementById(`cell-${node}`)
+					.addEventListener("click", () => {
+						toggleBlockage(node);
+					});
 			}
 		}
 	}
@@ -228,7 +309,6 @@ function drawGraph() {
 
 		const cellSide = (screenWidth - 40) / grid[0];
 		const cellWidth = (screenWidth - 40) / grid[1];
-		console.log(cellSide);
 		const cellList = document.getElementsByClassName("cell");
 
 		for (let cellCount = 0; cellCount < cellList.length; cellCount++) {
@@ -237,6 +317,47 @@ function drawGraph() {
 			cellElement.style.width = `${cellWidth}px`;
 		}
 	}
+}
+function drawDFSGraph() {
+	while (dfsGraphNode.firstChild) {
+		dfsGraphNode.removeChild(dfsGraphNode.lastChild);
+	}
+	for (let rowCount = 0; rowCount < dfsGrid[0]; rowCount++) {
+		const rowElement = document.createElement("div");
+		rowElement.className = "row";
+		rowElement.id = `dfs-row-${rowCount}`;
+		dfsGraphNode.appendChild(rowElement);
+	}
+	for (const node in dfsGraph) {
+		if (Object.hasOwnProperty.call(dfsGraph, node)) {
+			const nodeObj = dfsGraph[node];
+			const rowId = `dfs-row-${nodeToRow(node, true)}`;
+			if (node != "length") {
+				const nodeElement = document.createElement("div");
+				nodeElement.className = "cell ";
+				nodeElement.id = `dfs-cell-${node}`;
+				nodeElement.textContent = node;
+				document.getElementById(rowId).appendChild(nodeElement);
+				document
+					.getElementById(`dfs-cell-${node}`)
+					.addEventListener("click", () => {
+						toggleBlockage(node);
+					});
+			}
+		}
+	}
+}
+function drawDFS(node, prevNode) {
+	selector = 'blocks';
+	if (node != 0)
+	{
+		time += 50;
+		const edgeNode = getEdgeNode(node, prevNode);
+		setTimeout(() => {toggleBlockage(edgeNode);}, time);
+	}
+	time += 50;
+	setTimeout(() => {toggleBlockage(dfsGraph[node].complementary);}, time);
+
 }
 function routeColor(routeList, mainRoute = false) {
 	routeList.forEach((route) => {
@@ -259,11 +380,14 @@ function routeColor(routeList, mainRoute = false) {
 		});
 	});
 	if (found) {
-		if (graph[routeList[0].at(-1)].destination) document.getElementById("route").textContent = JSON.stringify(routeList[0]);
-		else document.getElementById("route").textContent = "no valid routes found!";
+		if (graph[routeList[0].at(-1)].destination)
+			document.getElementById("route").textContent = JSON.stringify(
+				routeList[0]
+			);
+		else
+			document.getElementById("route").textContent = "no valid routes found!";
 	}
 }
-
 
 // EXECUTORS
 function generate() {
@@ -272,20 +396,24 @@ function generate() {
 	// Resets
 	grid[0] = 0;
 	grid[1] = 0;
-	start = 0;
+	dfsGrid[0] = 0;
+	dfsGrid[1] = 0;
 	target = 0;
 	found = false;
 
 	// Get values
 	grid[0] = parseInt(document.getElementById("row").value);
 	grid[1] = parseInt(document.getElementById("col").value);
+    dfsGrid[0] = Math.ceil(grid[0] / 2);
+    dfsGrid[1] = Math.ceil(grid[1] / 2);
 
-	target = (grid[0] * grid[1]) - 2 - grid[0];
+	target = grid[0] * grid[1] - 2 - grid[0];
 	start = row_colToNode(1, 1);
 
 	// Generate graph
 	graphGen();
 	drawGraph();
+	drawDFSGraph();
 
 	// Enable buttons
 	document.getElementById("runner").disabled = false;
@@ -301,7 +429,7 @@ function runOnce() {
 	graphGen();
 	drawGraph();
 }
-function run() { 
+function run() {
 	graphNode.style.pointerEvents = "none";
 
 	var startTime = performance.now();
@@ -312,7 +440,10 @@ function run() {
 	var endTime = performance.now();
 
 	routeColor(routes, true);
-	document.getElementById("time").textContent = `took ${((endTime - startTime) / 1000).toFixed(3)} seconds to find!`;
+	document.getElementById("time").textContent = `took ${(
+		(endTime - startTime) /
+		1000
+	).toFixed(3)} seconds to find!`;
 }
 function shuffle(array) {
 	let currentIndex = array.length,
@@ -330,7 +461,6 @@ function shuffle(array) {
 	return array;
 }
 
-
 // Executions
 window.addEventListener("load", () => {
 	// For mobile screens
@@ -341,6 +471,5 @@ window.addEventListener("load", () => {
 			mainCont.offsetHeight + routeCont.offsetHeight * 3 + screenWidth + 100
 		}px`;
 		mainCont.style.padding = "5px";
-		console.log(mainCont.offsetHeight);
 	}
 });
