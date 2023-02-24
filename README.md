@@ -4,12 +4,12 @@ A visualizer of path finder algorithm. Generate a grid, set blockades, choose st
 
 ## IMPORTANT NOTES:
 
-   * Make sure to keep at least one path open [else RIP your RAM!]
-   * The bigger the grid you make, the more time it will take [Highest recommendation: 30x30]
-   * There might be some BUGS
+- Make sure to keep at least one path open [else RIP your RAM!]
+- The bigger the grid you make, the more time it will take [Highest recommendation: 30x30]
+- There might be some BUGS
 
 If any bugs found, create an issue or report at ryoutaroshinigami@gmail.com
 
-**PATH FINDR:** implementation of *BFS algorithm*
+**PATH FINDR:** implementation of _BFS algorithm_
 
-**MAZE GENERATOR:** implementation of *DFS algorithm*
+**MAZE GENERATOR:** implementation of _DFS algorithm_

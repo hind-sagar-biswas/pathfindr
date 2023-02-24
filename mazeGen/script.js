@@ -255,13 +255,14 @@ function DFS(node = "0", prevNode = "-1") {
 	if (!dfsGraph[node].visited) {
 		dfsGraph[node].previous = prevNode;
 		dfsGraph[node].visited = true;
+
 	}
 
 	drawDFS(node, prevNode);
-	timeDFS += 100;
-	setTimeout(() => {
-		document.getElementById(`dfs-cell-${node}`).style.color = "white";
-	}, timeDFS);
+	// timeDFS += 100;
+	// setTimeout(() => {
+	// 	document.getElementById(`dfs-cell-${node}`).style.color = "white";
+	// }, timeDFS);
 
 	// if (!checkAdjAvailableDFS(node)) return true;
 	const adjNodes = shuffle(dfsGraph[node].adjacents);
@@ -351,12 +352,12 @@ function drawDFS(node, prevNode) {
 	selector = 'blocks';
 	if (node != 0)
 	{
-		time += 50;
+		timeDFS += 50;
 		const edgeNode = getEdgeNode(node, prevNode);
-		setTimeout(() => {toggleBlockage(edgeNode);}, time);
+		setTimeout(() => {toggleBlockage(edgeNode);}, timeDFS);
 	}
-	time += 50;
-	setTimeout(() => {toggleBlockage(dfsGraph[node].complementary);}, time);
+	timeDFS += 50;
+	setTimeout(() => {toggleBlockage(dfsGraph[node].complementary);}, timeDFS);
 
 }
 function routeColor(routeList, mainRoute = false) {
@@ -413,11 +414,9 @@ function generate() {
 	// Generate graph
 	graphGen();
 	drawGraph();
-	drawDFSGraph();
 
 	// Enable buttons
 	document.getElementById("runner").disabled = false;
-	document.getElementById("runner-once").disabled = false;
 
 	// Set value of routes
 	routes = [[start]];
