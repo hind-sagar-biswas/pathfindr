@@ -9,3 +9,7 @@ A visualizer of path finder algorithm. Generate a grid, set blockades, choose st
    * There might be some BUGS
 
 If any bugs found, create an issue or report at ryoutaroshinigami@gmail.com
+
+**PATH FINDR:** implementation of *BFS algorithm*
+
+**MAZE GENERATOR:** implementation of *DFS algorithm*
