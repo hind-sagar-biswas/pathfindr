@@ -10,8 +10,49 @@
 </head>
 <body>
     <main>
-        <a href="./pathFindr/">PATHFINDER: BFS Algo</a>
-        <a href="./mazeGen/">MAZE GENERATOR: DFS Algo</a>
+        <a href="./pathFindr/" target="_blank">PATHFINDER: BFS Algo</a>
+        <a href="./mazeGen/" target="_blank">MAZE GENERATOR: DFS Algo</a>
     </main>
+    <article>
+        <h2>BFS algorithm <span class="less-imp">(explained such that even middle schooler understands)</span>:</h2>
+        <p>BFS stands for Breadth-First Search, and it is a way to explore a graph or a maze in a systematic way. Imagine you are
+        in a maze and you want to find the exit. You start at the entrance of the maze, and you want to explore it in a way that
+        you don't miss any paths and you find the shortest path to the exit.
+        <br>
+        To use BFS, you start at the entrance of the maze and explore all the paths that are connected to it, such as the
+        corridors or rooms that are directly adjacent to it. Then, you explore all the paths that are connected to those paths,
+        and so on, until you find the exit.
+        
+        To do this systematically, you use a queue, which is like a line of people waiting for something. In this case, you use
+        the queue to keep track of the paths you need to explore. You start by adding the entrance to the queue, and then you
+        explore the paths that are directly connected to it. For each of these paths, you add them to the end of the queue.
+        
+        Then, you take the first path in the queue and explore the paths that are directly connected to it. For each of these
+        paths, you add them to the end of the queue. You keep doing this until you find the exit.
+        
+        BFS guarantees that you will find the shortest path to the exit, because you explore all the paths that are the same
+        distance away from the entrance before you explore any paths that are farther away. So if there is a shorter path to the
+        exit, you will find it before you find a longer path.</p>
+    </article>
+    <article>
+        <h2>DFS algorithm <span class="less-imp">(explained such that even middle schooler understands)</span>:</h2>
+        <p>DFS stands for Depth-First Search, and it is a way to explore a graph or a maze in a systematic way. Imagine you are in
+        a maze and you want to find the exit. You start at the entrance of the maze, and you want to explore it in a way that
+        you don't miss any paths.
+        <br>
+        To use DFS, you start at the entrance of the maze and explore one path as far as you can before backtracking and
+        exploring another path. For example, you might choose to follow the first corridor you come across until you reach a
+        dead end, and then backtrack to the last intersection and try a different path.
+        
+        To do this systematically, you use a stack, which is like a stack of pancakes. In this case, you use the stack to keep
+        track of the paths you need to explore. You start by adding the entrance to the stack, and then you explore the first
+        path on the stack as far as you can. For each new path you come across, you add it to the top of the stack.
+        
+        When you reach a dead end, you remove the top path from the stack and go back to the previous intersection to explore a
+        different path. You keep doing this until you find the exit.
+        
+        DFS does not guarantee that you will find the shortest path to the exit, because you might explore a long path before
+        exploring a shorter path. But it is still a useful algorithm for exploring mazes and other graphs.</p>
+    </article>
 </body>
 </html>
