@@ -3,19 +3,29 @@ body {
     margin: 0;
     width: 100vw;
     min-height: 100vh;
+    overflow: hidden;
 
-    display: flex;
+    background-image: url(./abs-line.avif);
+    background-repeat: no-repeat;
+    background-size: cover;
+    background-attachment: fixed;
+
+    /* display: flex;
     justify-content: center;
-    align-items: center;
+    align-items: center; */
 }
 
 
 main {
+    width: 100%;
+    margin-top: 100px;
+    margin-left: 30px;
+
     display: flex;
     flex-direction: column;
     justify-content: center;
-    align-items: center;
-    gap: 10px;
+    align-items: start;
+    gap: 30px;
 }
 
 a {
@@ -24,9 +34,12 @@ a {
     text-decoration: none;
     font-family: 'Courier New', Courier, monospace;
     font-weight: bold;
-    /* font-size: large; */
+    font-size: large;
     color: white;
-    background-color: rgb(49, 49, 49);
+    background: rgba(17, 17, 17, 0.419);
+    background-image: url(./steel-background.png);
+
+    background-blend-mode: overlay;
     box-shadow: 3px 3px 0 0 #111111,
         2px 2px 0 0 #090909,
         1px 1px 0 0 #000000;
