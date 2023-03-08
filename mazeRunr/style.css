@@ -1,0 +1,122 @@
+html,
+body {
+    height: 100%;
+    width: 100%;
+    font-family: consolas;
+}
+
+main {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+h1 {
+    font-family: 'Courier New', Courier, monospace;
+}
+
+h5 {
+    color: rgb(239, 17, 17);
+}
+
+#main {
+    min-width: 750px;
+}
+
+#graph {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+
+}
+
+.row {
+    display: flex;
+    /* border-right: 1px solid rgb(7, 47, 13); */
+}
+
+/* .row:first-child .cell{
+    border-top: 10px solid #333333;
+}
+.row:last-child .cell{
+    border-bottom: 10px solid #333333;
+}
+.cell:first-child{
+    border-left: 10px solid #333333;
+}
+.cell:last-child{
+    border-right: 10px solid #333333;
+} */
+
+.cell {
+    /* background-color: #567d46;
+    border-left: 1px solid rgb(7, 47, 13);
+    border-bottom: 1px solid rgb(7, 47, 13); */
+    width: 4px;
+    border-radius: 1px;
+    aspect-ratio: 1;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 0;
+}
+
+.blocked {
+    background-color: #333333;
+}
+
+/* .start {
+    background-color: green;
+    color: white;
+}
+
+.destination {
+    background-color: red;
+    color: white;
+} */
+
+.route {
+    padding: 10px;
+    background-color: #111111;
+    color: rgb(206, 205, 205);
+    overflow: auto;
+    font-family: 'Courier New', Courier, monospace;
+}
+
+label {
+    color: #333333;
+}
+
+input[type='number'] {
+    width: 50px !important;
+}
+
+@media only screen and (max-device-width: 480px) {
+
+    main {
+        display: block;
+        padding: 0;
+        width: 100vw;
+        /* height: 150vh; */
+        /* overflow-x: hidden; */
+        overflow: auto;
+    }
+
+
+    .route {
+        overflow: auto;
+    }
+
+    #x {
+        display: none;
+    }
+
+    #header,
+    form,
+    .route,
+    #graph,
+    #main {
+        width: calc(100vw - 40px);
+    }
+}
