@@ -8,7 +8,7 @@ A visualizer of path finder algorithm. Generate a grid, set blockades, choose st
 - The bigger the grid you make, the more time it will take [Highest recommendation: 30x30]
 - There might be some BUGS
 
-If any bugs found, create an issue or report at ryoutaroshinigami@gmail.com
+If any bugs found, create an issue or report at <ryoutaroshinigami@gmail.com>
 
 **PATH FINDR:** implementation of _BFS algorithm_
 
@@ -16,9 +16,9 @@ If any bugs found, create an issue or report at ryoutaroshinigami@gmail.com
 
 ## NEXT TARGETS
 
-* Create maze runner game [**DIR:** mazeRunr]
-    * Generate a maze [DONE]
-    * Find the longest open route to set up start and target points.
-        * Modify *BFS algorithm* to run through all open nodes to find the longest route.
-    * Put a player avatar on start point and make it able to go through open nodes.
-* Develop **A\* algorithm** 
+- Create maze runner game [**DIR:** mazeRunr]
+  - Generate a maze [DONE]
+  - Find the longest open route to set up start and target points.
+    - Modify _BFS algorithm_ to run through all open nodes to find the longest route.
+  - Put a player avatar on start point and make it able to go through open nodes.
+- Develop **A\* algorithm**
